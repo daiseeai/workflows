@@ -1,0 +1,65 @@
+name: Deploy to AWS ECS
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "The environment to deploy to"
+        required: true
+        type: string
+      image:
+        description: "The image to deploy"
+        required: true
+        type: string
+      service:
+        description: "The service to deploy"
+        required: true
+        type: string
+      task-definition:
+        description: "The task definition to deploy"
+        required: true
+        type: string
+      container-name:
+        description: "The name of the container to deploy"
+        required: true
+        type: string
+
+jobs:
+  Deployment:
+    name: Deployment
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    environment: ${{ inputs.environment }}
+    concurrency: ${{ inputs.service }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Download Task Definition From AWS
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ inputs.task-definition }} \
+            --query taskDefinition | jq . > task-definition.json
+
+      - name: Echo Image to Deploy
+        run: |
+          echo ${{ inputs.image }}
+
+      - name: Update Task Definition
+        id: update-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ inputs.container-name }}
+          image: ${{ inputs.image }}
+
+      - name: Deploy to AWS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.update-task-definition.outputs.task-definition }}
+          service: ${{ inputs.service }}
+          cluster: ${{ inputs.environment }}
+          wait-for-service-stability: true
