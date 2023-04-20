@@ -1,0 +1,56 @@
+name: "Check Python"
+
+on:
+  workflow_call:
+    inputs:
+      typecheckMustPass:
+        description: "If set to true, type checking must pass"
+        default: true
+        type: boolean
+      lintingMustPass:
+        description: "If set to true, linting must pass"
+        default: true
+        type: boolean
+      testsMustPass:
+        description: "If set to true, testing must pass"
+        default: true
+        type: boolean
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: Install poetry
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Check black formatting
+        run: poetry run black . --check
+
+      - name: Check isort formatting
+        run: poetry run isort . --check
+
+      - name: Check types
+        if: ${{ inputs.typecheckMustPass }}
+        run: poetry run mypy .
+
+      - name: Linting
+        if: ${{ inputs.lintingMustPass }}
+        # Refernce: https://stackoverflow.com/a/63044665/8175935
+        run: poetry run pylint $(git ls-files '*.py')
+
+      - name: Run tests
+        if: ${{ inputs.testsMustPass }}
+        run: poetry run pytest
