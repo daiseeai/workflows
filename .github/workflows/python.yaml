@@ -3,6 +3,10 @@ name: "Check Python"
 on:
   workflow_call:
     inputs:
+      pydocstyleMustPass:
+        description: "If set to true, pydocstyle must pass"
+        default: true
+        type: boolean
       typecheckMustPass:
         description: "If set to true, type checking must pass"
         default: true
@@ -41,8 +45,9 @@ jobs:
 
       - name: Check isort formatting
         run: poetry run isort . --check
+
       - name: Check pydocstyle
-        if: ${{ pydocstyleMustPass }}
+        if: ${{ inputs.pydocstyleMustPass }}
         run: poetry run pydocstyle .
 
       - name: Check types
