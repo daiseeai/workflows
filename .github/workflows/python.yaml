@@ -32,6 +32,11 @@ jobs:
         with:
           python-version: 3.9
 
+      - name: Config Github URL to download Private Repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPOS_TOKEN }}
+        run: git config --global url."https://$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
+
       - name: Install poetry
         run: |
           python -m pip install --upgrade pip
