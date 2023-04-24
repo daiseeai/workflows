@@ -45,10 +45,10 @@ jobs:
         run: poetry install
 
       - name: Check black formatting
-        run: poetry run black . --check
+        run: poetry run black . --check --diff
 
       - name: Check isort formatting
-        run: poetry run isort . --check
+        run: poetry run isort . --check --diff
 
       - name: Check pydocstyle
         if: ${{ inputs.pydocstyleMustPass }}
