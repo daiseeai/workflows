@@ -27,24 +27,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
+      - uses: webfactory/ssh-agent@v0.7.0
         with:
-          python-version: 3.9
+          ssh-private-key: ${{ secrets.BUILD_SSH_KEY }}
 
       - name: Install poetry
-        run: |
-          python -m pip install --upgrade pip
-          pip install poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          cache: "poetry"
 
       - name: Install dependencies
         run: poetry install
 
       - name: Check black formatting
-        run: poetry run black . --check
+        run: poetry run black . --check --diff
 
       - name: Check isort formatting
-        run: poetry run isort . --check
+        run: poetry run isort . --check --diff
 
       - name: Check pydocstyle
         if: ${{ inputs.pydocstyleMustPass }}
