@@ -50,7 +50,7 @@ jobs:
         run: poetry run black . --check --diff
 
       - name: Check isort formatting
-        run: poetry run isort . --check --diff
+        run: poetry run isort . --check --diff --profile=black
 
       - name: Check pydocstyle
         if: ${{ inputs.pydocstyleMustPass }}
