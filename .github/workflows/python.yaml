@@ -23,11 +23,18 @@ on:
         description: "Supply Python version for workflow"
         default: "3.9"
         type: string
+      workingDirectory:
+        description: "Working directory for workflow"
+        default: "."
+        type: string
 
 jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.workingDirectory }}
     steps:
       - uses: actions/checkout@v3
 
