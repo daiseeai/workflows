@@ -23,11 +23,18 @@ on:
         description: "Supply Python version for workflow"
         default: "3.9"
         type: string
+      workingDirectory:
+        description: "Working directory for workflow"
+        default: "."
+        type: string
 
 jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.workingDirectory }}
     steps:
       - uses: actions/checkout@v3
 
@@ -50,7 +57,7 @@ jobs:
         run: poetry run black . --check --diff
 
       - name: Check isort formatting
-        run: poetry run isort . --check --diff
+        run: poetry run isort . --check --diff --profile=black
 
       - name: Check pydocstyle
         if: ${{ inputs.pydocstyleMustPass }}
