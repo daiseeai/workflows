@@ -89,4 +89,4 @@ jobs:
 
       - name: Run tests and compare code coverage
         if: ${{ inputs.testsMustPass && inputs.codeCoverageFailUnder != 0 }}
-        run: poetry run pytest --cov=$${{ inputs.codeCoverageProjectName }} --cov-fail-under=${{ inputs.codeCoverageFailUnder }}
+        run: poetry run pytest --cov=${{ inputs.codeCoverageProjectName }} --cov-fail-under=${{ inputs.codeCoverageFailUnder }}
