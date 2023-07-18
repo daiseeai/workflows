@@ -19,6 +19,17 @@ on:
         description: "If set to true, testing must pass"
         default: true
         type: boolean
+      codeCoverageFailUnder:
+        description: "Combined with testsMustPass tests will fail if code coverage is under XX%"
+        # pytest-cov must be in the poetry env to use this coverage.
+        # set to 0 to skip coverage checking.
+        # Will only run if testsMustPass=true.
+        default: 100
+        type: number
+      codeCoverageProjectName:
+        description: "Combined with codeCoverageFailUnder --cov=project_name"
+        default: ""
+        type: string
       pythonVersion:
         description: "Supply Python version for workflow"
         default: "3.9"
@@ -73,5 +84,9 @@ jobs:
         run: poetry run pylint $(git ls-files '*.py')
 
       - name: Run tests
-        if: ${{ inputs.testsMustPass }}
+        if: ${{ inputs.testsMustPass && inputs.codeCoverageFailUnder == 0 }}
         run: poetry run pytest
+
+      - name: Run tests and compare code coverage
+        if: ${{ inputs.testsMustPass && inputs.codeCoverageFailUnder != 0 }}
+        run: poetry run pytest --cov=${{ inputs.codeCoverageProjectName }} --cov-fail-under=${{ inputs.codeCoverageFailUnder }}
