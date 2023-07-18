@@ -21,6 +21,9 @@ on:
         type: boolean
       codeCoverageFailUnder:
         description: "Combined with testsMustPass tests will fail if code coverage is under XX%"
+        # pytest-cov must be in the poetry env to use this coverage.
+        # set to 0 to skip coverage checking.
+        # Will only run if testsMustPass=true.
         default: 100
         type: number
       codeCoverageProjectName:
