@@ -14,8 +14,8 @@ on:
 jobs:
   trigger:
   runs-on: ubuntu-latest
-    env:
-      ACTOR: ${{ github.event.inputs.actor }}
+  env:
+    ACTOR: ${{ github.event.inputs.actor }}
   steps:
     curl -L \
       -X POST \
