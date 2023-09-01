@@ -5,7 +5,7 @@ on:
       actor:
         required: true
         type: string
-  workflow_call:
+  workflow_dispatch:
     inputs:
       actor:
         required: true
