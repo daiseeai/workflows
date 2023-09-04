@@ -11,7 +11,7 @@ jobs:
     name: Trigger Package + Upload
     runs-on: ubuntu-latest
     env:
-      ACTOR: ${{ github.event.inputs.actor }}
+      ACTOR: ${{ inputs.actor }}
       GH_TOKEN: ${{ secrets.PULL_TOKEN }}
     steps:
       - name: Trigger Package + Upload
