@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # NOTE: There are some considerations for choosing the best fourmolu
       # version.
@@ -31,50 +31,20 @@ jobs:
       #    ghc-lib-parser that corresponds to the GHC version. Hackage has this
       #    information: https://hackage.haskell.org/package/fourmolu
       #
-      #    For GHC 9.4, this yields two major candidates:
+      #    For GHC 9.6, this yields:
       #
-      #        - 0.10.1.0
-      #        - 0.11.0.0
-      #
-      #    Ordinarily you might as well take the latest, but in this case there
-      #    is a reason to favor 0.10: 0.11 introduces the ormolu-0.5.3.0 change
-      #    "Normalize parentheses around constraints" that formats e.g.
-      #
-      #        HasCallStack => foo
-      #
-      #    as
-      #
-      #        (HasCallStack) => foo
-      #
-      #     The only problem with this is it runs up against the hlint rule
-      #     "redundant bracket", thus there is a conflict.
-      #
-      #    There are three solutions:
-      #
-      #    1. Configure hlint to ignore "redundant bracket" in all repos where
-      #       this is a problem.
-      #    2. Upgrade fourmolu to 0.12+ and set its new
-      #       'single-constraint-parens' option to false.
-      #    3. Wait for hlint 3.6 (GHC 9.6), which fixes "redundant bracket"
-      #       so that it doesn't fire in these instances.
-      #
-      #    In any case, fourmolu and hlint are no longer in conflict.
-      #
-      #    The solution requiring the least (i.e zero) work is to simply use
-      #    fourmolu 0.10.1.0 for now. Once we upgrade to GHC 9.6+, both
-      #    fourmolu and hlint can be upgraded, and this will not be a problem.
-      #
-      #    See https://github.com/tweag/ormolu/issues/1003 for details.
+      #        - 0.14.0.0
+
 
       - uses: haskell-actions/run-fourmolu@v9
         with:
-          version: "0.10.1.0"
+          version: "0.14.0.0"
 
-      - uses: haskell/actions/hlint-setup@v2
+      - uses: haskell-actions/hlint-setup@v2
         with:
-          version: "3.5"
+          version: "3.6"
 
-      - uses: haskell/actions/hlint-run@v2
+      - uses: haskell-actions/hlint-run@v2
         with:
           path: "."
           fail-on: suggestion
