@@ -27,7 +27,7 @@ jobs:
       image_ecr_uri: ${{ steps.mirror-to-ecr.outputs.image_ecr_uri }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.DEVOPS_AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ vars.DEVOPS_AWS_REGION }}
@@ -43,6 +43,8 @@ jobs:
       - name: Login to Amazon Elastic Container Registry
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-aws-account-id: "false"
 
       - name: Push to Amazon Elastic Container Registry
         id: mirror-to-ecr
