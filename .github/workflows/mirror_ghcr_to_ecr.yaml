@@ -1,0 +1,50 @@
+name: Mirror GHCR to ECR
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+        default: "call-frontend"
+      tag:
+        required: true
+        type: string
+        default: "latest"
+
+jobs:
+  mirror:
+    name: Mirror GHCR to ECR
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ vars.DEVOPS_AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.DEVOPS_AWS_REGION }}
+          role-session-name: mirror-ghcr-to-ecr
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Amazon Elastic Container Registry
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push to Amazon Elastic Container Registry
+        env:
+          GHCR_REGISTRY: ghcr.io/daiseeai
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker pull $GHCR_REGISTRY/${{ inputs.image }}:${{ inputs.tag }}
+          docker tag  $GHCR_REGISTRY/${{ inputs.image }}:${{ inputs.tag }} $ECR_REGISTRY:latest
+          docker tag  $GHCR_REGISTRY/${{ inputs.image }}:${{ inputs.tag }} $ECR_REGISTRY:${{ inputs.tag }}
+
+          docker push $ECR_REGISTRY:${{ inputs.tag }}
+          docker push $ECR_REGISTRY:latest
