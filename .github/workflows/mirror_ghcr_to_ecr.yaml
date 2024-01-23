@@ -10,10 +10,6 @@ on:
         required: true
         type: string
         default: "latest"
-    outputs:
-      image_ecr_uri:
-        description: "The build image ecr uri"
-        value: ${{ jobs.mirror.outputs.image_ecr_uri }}
 
 jobs:
   mirror:
@@ -23,8 +19,6 @@ jobs:
       id-token: write
       contents: read
       packages: read
-    outputs:
-      image_ecr_uri: ${{ steps.mirror-to-ecr.outputs.image_ecr_uri }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -47,7 +41,6 @@ jobs:
           mask-aws-account-id: "false"
 
       - name: Push to Amazon Elastic Container Registry
-        id: mirror-to-ecr
         env:
           GHCR_REGISTRY: ghcr.io/daiseeai
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -58,5 +51,3 @@ jobs:
 
           docker push ${{ env.ECR_REGISTRY }}/${{ inputs.image }}:latest
           docker push ${{ env.ECR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }}
-
-          echo "image_ecr_uri=${{ env.ECR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
