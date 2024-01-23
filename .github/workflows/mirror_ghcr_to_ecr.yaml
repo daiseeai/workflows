@@ -44,8 +44,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           docker pull ${{ env.GHCR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }}
-          docker tag  ${{ env.GHCR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }} ${{ env.GHCR_REGISTRY }}/${{ inputs.image }}:latest
-          docker tag  ${{ env.GHCR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }} ${{ env.GHCR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }}
+          docker tag  ${{ env.GHCR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }} ${{ env.ECR_REGISTRY }}/${{ inputs.image }}:latest
+          docker tag  ${{ env.GHCR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }} ${{ env.ECR_REGISTRY }}/${{ inputs.image }}:${{ inputs.tag }}
 
-          docker push ${{ env.GHCR_REGISTRY }}:latest
-          docker push ${{ env.GHCR_REGISTRY }}:${{ inputs.tag }}
+          docker push ${{ env.ECR_REGISTRY }}:latest
+          docker push ${{ env.ECR_REGISTRY }}:${{ inputs.tag }}
