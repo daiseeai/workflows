@@ -6,6 +6,10 @@ on:
         description: "The environment to deploy to"
         required: true
         type: string
+      registry:
+        description: "Registry of the image to deploy"
+        required: true
+        type: string
       image:
         description: "The image to deploy"
         required: true
@@ -51,7 +55,7 @@ jobs:
 
       - name: Echo Image to Deploy
         run: |
-          echo ${{ inputs.image }}:${{ inputs.tag }}
+          echo ${{ inputs.registry}}/${{ inputs.image }}:${{ inputs.tag }}
 
       - name: Update Task Definition
         id: update-task-definition
@@ -59,7 +63,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: ${{ inputs.container-name }}
-          image: ${{ inputs.image }}:${{ inputs.tag }}
+          image: ${{ inputs.registry}}/${{ inputs.image }}:${{ inputs.tag }}
 
       - name: Deploy to AWS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
