@@ -19,6 +19,14 @@ on:
         description: "If set to true, testing must pass"
         default: true
         type: boolean
+      # Dummy variables required for testing using boto3
+      # Are configurable in the case we need to change these.
+      AWS_DEFAULT_REGION:
+        default: us-east-1
+        type: string
+      LOG_LEVEL:
+        default: debug
+        type: string
       codeCoverageFailUnder:
         description: "Combined with testsMustPass tests will fail if code coverage is under XX%"
         # pytest-cov must be in the poetry env to use this coverage.
@@ -38,6 +46,14 @@ on:
         description: "Working directory for workflow"
         default: "."
         type: string
+
+env:
+  # This is so that boto stops complaining,
+  # the tests should not actually connect to AWS
+  # if you need that then use `moto`
+  AWS_DEFAULT_REGION: ${{ inputs.AWS_DEFAULT_REGION }}
+  # This is for the logger to capture all logs
+  LOG_LEVEL: ${{ inputs.LOG_LEVEL }}
 
 jobs:
   build:
