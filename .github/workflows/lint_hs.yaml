@@ -31,9 +31,17 @@ jobs:
       #    ghc-lib-parser that corresponds to the GHC version. Hackage has this
       #    information: https://hackage.haskell.org/package/fourmolu
       #
-      #    For GHC 9.6, this yields:
+      #    For GHC 9.6.5, this yields:
       #
       #        - 0.14.0.0
+      # Example of bumping versions here.
+      # * Check `resolver` `lts` version in `snapshot.yaml`
+      # * Use this in the below commands to work out what version of `hlint` and `fourmolu` to use.
+      #
+      # GHC: curl -s "https://www.stackage.org/lts-{DESIRED_VERSION}" | grep -o "ghc-[0-9.]*"
+      # hlint: curl -s "https://www.stackage.org/lts-{DESIRED_VERSION}" | grep -o "hlint-[0-9.]*"
+      # fourmolu: curl -s "https://www.stackage.org/lts-{DESIRED_VERSION}" | grep -o "fourmolu-[0-9.]*"
+      #
 
 
       - uses: haskell-actions/run-fourmolu@v9
@@ -42,7 +50,7 @@ jobs:
 
       - uses: haskell-actions/hlint-setup@v2
         with:
-          version: "3.6"
+          version: "3.6.1"
 
       - uses: haskell-actions/hlint-run@v2
         with:
