@@ -31,7 +31,7 @@ jobs:
       #    ghc-lib-parser that corresponds to the GHC version. Hackage has this
       #    information: https://hackage.haskell.org/package/fourmolu
       #
-      #    For GHC 9.6, this yields:
+      #    For GHC 9.6.5, this yields:
       #
       #        - 0.14.0.0
 
